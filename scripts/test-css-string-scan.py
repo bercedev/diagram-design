@@ -67,6 +67,9 @@ CASES = (
      'rect { background: url( "a); transform: translate(9px); --x: "c" }'),
     # `u\72 l(` is `url(` to the browser, so the quote sits inside an unquoted url().
     ("an escaped url name", False, "head", 'rect { background: u\\72 l(a"b); transform: translate(9px); --x: "c" }'),
+    # A `url(` that ends a longer name is an ordinary function: the quote in it opens a string.
+    ("a quote in a function whose name ends in url", False, "head",
+     'rect { --a: myurl(a"b); --x: "); transform: translate(9px); --z: "c" }'),
     # A form feed ends a string just as a line feed does.
     ("a form feed inside a string", False, "head", 'rect { --a: "\f;transform:translate(9px);--b:" }'),
     # A string ends at its line: the next rule is live.

@@ -126,7 +126,8 @@ ACCENTS = {"#bf4520", "#f08a59"}   # light and dark skin accent tokens
 
 # Quoted CSS data is not a declaration: `--note: "a;transform:b"` moves nothing (#431).
 # A quote opens a string only where the browser tokenizes one, so a comment, an
-# unquoted url() (escapes included, so `url(a\)"b)` is one token) and an escaped
+# unquoted url() (escapes included, so `url(a\)"b)` is one token; not the `url(` that
+# ends a longer name such as `myurl(`) and an escaped
 # character are consumed first and kept as written. A string that never closes on
 # its line is kept as well - a line feed, carriage return or form feed ends it - so
 # the checker still fails closed on it. Every other character of a string becomes a space and its newlines
@@ -135,7 +136,7 @@ ACCENTS = {"#bf4520", "#f08a59"}   # light and dark skin accent tokens
 # (decoded before CSS sees it inside <svg> and in every attribute value) or an escape
 # left outside a string (`u\72 l(` is `url(`).
 CSS_STRING_RE = re.compile(
-    r"""/\*.*?(?:\*/|\Z)|url\((?![ \t\n\r\f]*["'])(?:\\[\s\S]|[^)\\])*\)|\\[\s\S]"""
+    r"""/\*.*?(?:\*/|\Z)|(?<![-\w\x80-\U0010ffff])url\((?![ \t\n\r\f]*["'])(?:\\[\s\S]|[^)\\])*\)|\\[\s\S]"""
     r"""|(?P<string>"(?:\\[\s\S]|[^"\\\n\r\f])*"|'(?:\\[\s\S]|[^'\\\n\r\f])*')""",
     re.DOTALL | re.IGNORECASE,
 )
