@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Quoted CSS data is not a geometry declaration, in every verifier that scans for one.
 
-Eleven verifiers refuse a CSS declaration that can move a verified mark. Each read
+Twelve verifiers refuse a CSS declaration that can move a verified mark. Each read
 `body { --notes: "literal;transform:translate(999px)" }` as a `transform`
 declaration, although the browser reads a quoted string that moves nothing (#431).
 
@@ -24,13 +24,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSET_DIR = ROOT / "skills/diagram-design/assets"
 
-TYPES = ("architecture-delta", "beeswarm", "bump", "bubble", "marimekko", "ridgeline",
+TYPES = ("architecture-delta", "beeswarm", "box-plot", "bump", "bubble", "marimekko", "ridgeline",
          "service-blueprint", "polar", "streamgraph", "slopegraph", "waterfall")
 
 # The first element of each example that its verifier checks as a mark: (tag, attribute).
 MARKS = {
     "architecture-delta": ("rect", "width"),
     "beeswarm": ("circle", "data-value"),
+    "box-plot": ("rect", "data-role"),
     "bump": ("path", "data-series"),
     "bubble": ("circle", "data-name"),
     "marimekko": ("rect", "data-segment"),
@@ -70,6 +71,10 @@ CASES = (
     # A `url(` that ends a longer name is an ordinary function: the quote in it opens a string.
     ("a quote in a function whose name ends in url", False, "head",
      'rect { --a: myurl(a"b); --x: "); transform: translate(9px); --z: "c" }'),
+    # `#url(` is a hash token and `@url(` an at-keyword, so the `(` opens a plain block and the
+    # quote in it opens a string, as it does after a longer name.
+    ("a quote after #url(", False, "head", 'rect { --a: #url(a"b); --x: "); transform: translate(9px); --z: "c" }'),
+    ("a quote after @url(", False, "head", 'rect { --a: @url(a"b); --x: "); transform: translate(9px); --z: "c" }'),
     # A form feed ends a string just as a line feed does.
     ("a form feed inside a string", False, "head", 'rect { --a: "\f;transform:translate(9px);--b:" }'),
     # A string ends at its line: the next rule is live.
