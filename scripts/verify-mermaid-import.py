@@ -1436,6 +1436,8 @@ def check_standalone_hyphenated_node(tmp: Path) -> None:
         fail(f"standalone hyphenated node ids were not kept: {nodes}")
     path.write_text("flowchart LR\n  my-node -.- \n", encoding="utf-8")
     expect_error([str(path)], "malformed edge at line 2")
+    path.write_text("flowchart LR\n  A --> B\n  A- >B\n", encoding="utf-8")
+    expect_error([str(path)], "malformed edge at line 3")
     ok("standalone flowchart nodes with a hyphen in the id are nodes, not malformed edges")
 
 
